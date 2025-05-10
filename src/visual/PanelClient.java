@@ -67,4 +67,7 @@ public class PanelClient extends JPanel {
     	bottomPanel.add(getBtnEnviar(), BorderLayout.EAST);
     	return bottomPanel;
     }
+    
+   
+
 }
