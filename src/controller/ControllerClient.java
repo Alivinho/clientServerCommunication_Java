@@ -9,9 +9,12 @@ import java.net.*;
 public class ControllerClient {
 	private JFrame frame;
 	private PanelClient panel;
+	
 	private PrintWriter out;
 	private BufferedReader in;
+	
 	private Socket socket;
+	
 	private String nomeUsuario;
 	private String nomeServidor;
 
