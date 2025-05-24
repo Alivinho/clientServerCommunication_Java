@@ -7,7 +7,10 @@ public class PanelClient extends JPanel {
 	
 	private JTextArea chatClient;
 	private JTextField inputField;
+	
 	private JButton bntEnviar;
+	private JButton btnUpload; 
+	
 	private JScrollPane scrollPane;
 
 	public PanelClient() {
@@ -59,14 +62,41 @@ public class PanelClient extends JPanel {
     }
 
     // Painel inferior com campo de texto + botão
-    private JPanel getBottomPanel() {
-    	JPanel bottomPanel = new JPanel(new BorderLayout(10, 0));
-    	bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    	bottomPanel.setBackground(Color.WHITE);
-    	bottomPanel.add(getInputField(), BorderLayout.CENTER);
-    	bottomPanel.add(getBtnEnviar(), BorderLayout.EAST);
-    	return bottomPanel;
-    }
+	  private JPanel getBottomPanel() {
+	        JPanel bottomPanel = new JPanel(new BorderLayout(5, 0));
+	        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	        //bottomPanel.setBackground(Color.WHITE);
+	        
+	        // Painel para os componentes da esquerda (upload + input)
+	        JPanel leftPanel = new JPanel(new BorderLayout(5, 0));
+	        
+	        // Adiciona o botão de upload
+	        leftPanel.add(getBtnUpload(), BorderLayout.WEST);
+	        leftPanel.add(getInputField(), BorderLayout.CENTER);
+	        
+	        bottomPanel.add(leftPanel, BorderLayout.CENTER);
+	        bottomPanel.add(getBtnEnviar(), BorderLayout.EAST);
+	        
+	        return bottomPanel;
+	    }
+
+	    public JButton getBtnUpload() {
+	        if (btnUpload == null) {
+	            // Carrega o ícone (substitua pelo caminho da sua imagem)
+	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));
+	            
+	            // Redimensiona o ícone se necessário
+	            Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+	            uploadIcon = new ImageIcon(img);
+	            
+	            btnUpload = new JButton(uploadIcon);
+	            btnUpload.setToolTipText("Enviar arquivo");
+	            //btnUpload.setBackground(new Color(230, 230, 230));
+	            btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+	        }
+	        return btnUpload;
+	    }
+
     
    
 
