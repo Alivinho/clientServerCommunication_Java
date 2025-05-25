@@ -77,11 +77,12 @@ public class ControllerClient {
                 socket = new Socket(ip, porta);
 
                 fileTransfer = new FileTransfer(
-                        socket,
-                        System.getProperty("user.home") + File.separator + "Downloads",
-                        panel.getTextAreaChatClient(),
-                        frame
-                );
+                	    socket,
+                	    System.getProperty("user.home") + File.separator + "Downloads",
+                	    panel.getTextAreaChatClient(), // ou getTextAreaChatServer() no servidor
+                	    frame,
+                	    nomeUsuario // Adicione este parâmetro
+                	);
 
                 //fileTransfer.sendText("NOME_CLIENTE:" + nomeUsuario);
 
@@ -100,7 +101,7 @@ public class ControllerClient {
     private void enviarMensagem() {
         String text = panel.getInputField().getText().trim();
         if (!text.isEmpty()) {
-            // Formata a mensagem para enviar (sem formatação HTML)
+            // Envia apenas o texto puro (sem formatação HTML)
             String rawMessage = nomeUsuario + ": " + text;
             fileTransfer.sendText(rawMessage);
             

@@ -74,13 +74,14 @@ public class ControllerServer {
 
                 clientSocket = serverSocket.accept();
 
-                fileTransfer = new FileTransfer(
-                        clientSocket,
-                        System.getProperty("user.home") + File.separator + "Downloads",
-                        panel.getTextAreaChatServer(),
-                        frame
-                );
 
+                fileTransfer = new FileTransfer(
+                		clientSocket,
+                	    System.getProperty("user.home") + File.separator + "Downloads",
+                	    panel.getTextAreaChatServer(), // ou getTextAreaChatServer() no servidor
+                	    frame,
+                	    nomeUsuario // Adicione este parâmetro
+                	);
                 System.out.println("Cliente conectado!");
 
                 //fileTransfer.sendText("NOME_SERVIDOR:" + nomeUsuario);
@@ -97,12 +98,12 @@ public class ControllerServer {
     private void enviarMensagem() {
         String text = panel.getInputField().getText().trim();
         if (!text.isEmpty()) {
-            // Formata a mensagem para enviar
-            String formattedMsg = formatarMensagemDireita(nomeUsuario + ": " + text);
-            fileTransfer.sendText(formattedMsg);
+            // Envia apenas o texto puro (sem formatação HTML)
+            String rawMessage = nomeUsuario + ": " + text;
+            fileTransfer.sendText(rawMessage);
             
-            // Adiciona ao chat local
-            appendToChat(formattedMsg);
+            // Adiciona ao chat local com formatação de enviado (direita)
+            appendToChat(formatarMensagemDireita(rawMessage));
             panel.getInputField().setText("");
         }
     }
