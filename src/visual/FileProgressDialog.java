@@ -1,13 +1,26 @@
 package visual;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 public class FileProgressDialog extends JDialog {
     private JProgressBar progressBar;
     private JLabel lblStatus;
     private JButton btnCancel;
     private boolean transferCancelled;
+    private DataOutputStream dos;
 
     public FileProgressDialog(JFrame parent, String fileName) {
         super(parent, "Transferência de Arquivo", true);
@@ -20,27 +33,29 @@ public class FileProgressDialog extends JDialog {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Label com nome do arquivo
         lblStatus = new JLabel("Arquivo: " + fileName);
         lblStatus.setFont(new Font("SansSerif", Font.PLAIN, 12));
 
-        // Barra de progresso
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
         progressBar.setFont(new Font("SansSerif", Font.PLAIN, 11));
 
-        // Botão de cancelamento
         btnCancel = new JButton("Cancelar");
         btnCancel.addActionListener(e -> {
             transferCancelled = true;
+            if (dos != null) {
+                try {
+                    dos.writeUTF("TRANSFER_CANCELLED");
+                    dos.flush();
+                } catch (IOException ex) {
+                }
+            }
             dispose();
         });
 
-        // Painel inferior para o botão
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(btnCancel);
 
-        // Layout
         panel.add(lblStatus, BorderLayout.NORTH);
         panel.add(progressBar, BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.SOUTH);
@@ -48,12 +63,21 @@ public class FileProgressDialog extends JDialog {
         add(panel);
     }
 
-    public void updateProgress(int progress) {
-        progressBar.setValue(progress);
+    public void setOutputStream(DataOutputStream dos) {
+        this.dos = dos;
+    }
+
+    public void updateProgress(int progresso) {
+        SwingUtilities.invokeLater(() -> {
+            progressBar.setValue(progresso);
+            progressBar.setString(progresso + "%");
+        });
     }
 
     public void updateStatus(String status) {
-        lblStatus.setText(status);
+        SwingUtilities.invokeLater(() -> {
+            lblStatus.setText(status);
+        });
     }
 
     public boolean isTransferCancelled() {
