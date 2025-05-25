@@ -3,7 +3,11 @@ package visual;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,14 +23,37 @@ public class PanelServer extends JPanel {
 	private JTextField inputField;
 	private JButton btnEnviar;
 	private JScrollPane scrollPane;
+	// Image backgroundImage;
 
 	public PanelServer() {
 		setLayout(new BorderLayout());
+		//setOpaque(false);
+		
+		//getTextAreaChatServer().setOpaque(false);
+		//getScrollPaneChatServer().setOpaque(false);
+		//getScrollPaneChatServer().getViewport().setOpaque(false);
+
 		setBackground(Color.WHITE);
 
 		add(getScrollPaneChatServer(), BorderLayout.CENTER); // Área de mensagens
 		add(getBottomPanel(), BorderLayout.SOUTH); // Campo de entrada + botão
+		
+		  /*try {
+	            backgroundImage = ImageIO.read(getClass().getResource("/img/fundo_Chat.jpg"));
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            backgroundImage = null;
+	        }*/
 	}
+	
+	 //@Override
+	    /*protected void paintComponent(Graphics g) {
+	        super.paintComponent(g);
+	        // Desenha a imagem de fundo
+	        if (backgroundImage != null) {
+	            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+	        }
+	    }*/
 
 	// Área onde as mensagens são exibidas
 	public JTextArea getTextAreaChatServer() {
@@ -78,14 +105,4 @@ public class PanelServer extends JPanel {
 		return bottomPanel;
 	}
 
-	/*public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> {
-			JFrame frame = new JFrame("Servidor de Chat");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setSize(400, 500);
-			frame.setLocationRelativeTo(null); // centraliza a janela
-			frame.setContentPane(new PanelServer());
-			frame.setVisible(true);
-		});
-	}*/
 }

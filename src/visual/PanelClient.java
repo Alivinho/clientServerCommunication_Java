@@ -82,7 +82,7 @@ public class PanelClient extends JPanel {
 
 	    public JButton getBtnUpload() {
 	        if (btnUpload == null) {
-	            // Carrega o ícone (substitua pelo caminho da sua imagem)
+	            // Carrega o ícone
 	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));
 	            
 	            // Redimensiona o ícone se necessário
