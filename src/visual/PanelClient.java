@@ -2,10 +2,12 @@ package visual;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
 
 public class PanelClient extends JPanel {
 	
-	private JTextArea chatClient;
+	//private JTextArea chatClient;
+	private JTextPane  chatClient; 
 	private JTextField inputField;
 	
 	private JButton bntEnviar;
@@ -22,7 +24,7 @@ public class PanelClient extends JPanel {
 	}
 	
 	// Área de texto onde o chat aparece
-	public JTextArea getTextAreaChatClient() {
+	/*public JTextArea getTextAreaChatClient() {
         if (chatClient == null) {
         	chatClient = new JTextArea();
         	chatClient.setEditable(false);
@@ -31,7 +33,22 @@ public class PanelClient extends JPanel {
         	chatClient.setWrapStyleWord(true);
         }
         return chatClient;
-    }
+    }*/
+	
+	public JTextPane getTextAreaChatClient() {
+	    if (chatClient == null) {
+	        chatClient = new JTextPane();
+	        chatClient.setEditable(false);
+	        chatClient.setContentType("text/html");
+	        chatClient.setEditorKit(new HTMLEditorKit());
+	        chatClient.setBackground(new Color(240, 242, 245)); // Cor de fundo similar ao WhatsApp
+	        chatClient.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	        
+	        // Configura margens internas
+	        chatClient.setMargin(new Insets(5, 5, 5, 5));
+	    }
+	    return chatClient;
+	}
 
     public JScrollPane getScrollPaneChatClient() {
     	if (scrollPane == null) {

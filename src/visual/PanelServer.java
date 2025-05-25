@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -15,11 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTMLEditorKit;
 
 public class PanelServer extends JPanel {
 
-	private JTextArea chatServer;
+	//private JTextArea chatServer;
+	private JTextPane  chatServer; 
+
 	private JTextField inputField;
 	private JButton btnEnviar;
 	private JScrollPane scrollPane;
@@ -56,7 +61,7 @@ public class PanelServer extends JPanel {
 	    }*/
 
 	// Área onde as mensagens são exibidas
-	public JTextArea getTextAreaChatServer() {
+	/*public JTextArea getTextAreaChatServer() {
 		if (chatServer == null) {
 			chatServer = new JTextArea();
 			chatServer.setEditable(false);
@@ -65,7 +70,36 @@ public class PanelServer extends JPanel {
 			chatServer.setWrapStyleWord(true);
 		}
 		return chatServer;
+	}*/
+	
+	
+
+	/*public JTextPane getTextAreaChatServer() {
+        if (chatServer == null) {
+        	chatServer = new JTextPane();
+            chatServer.setEditable(false);
+            chatServer.setContentType("text/html"); // Habilita HTML
+            chatServer.setEditorKit(new HTMLEditorKit());
+            chatServer.setBackground(Color.WHITE);
+        }
+        return chatServer;
+    }*/
+	
+	public JTextPane getTextAreaChatServer() {
+	    if (chatServer == null) {
+	    	chatServer = new JTextPane();
+	    	chatServer.setEditable(false);
+	        chatServer.setContentType("text/html");
+	        chatServer.setEditorKit(new HTMLEditorKit());
+	        chatServer.setBackground(new Color(240, 242, 245)); // Cor de fundo similar ao WhatsApp
+	        chatServer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	        
+	        // Configura margens internas
+	        chatServer.setMargin(new Insets(5, 5, 5, 5));
+	    }
+	    return chatServer;
 	}
+
 
 	public JScrollPane getScrollPaneChatServer() {
 		if (scrollPane == null) {

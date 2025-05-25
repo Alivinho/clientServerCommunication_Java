@@ -37,7 +37,7 @@ public class PanelMain extends JPanel {
         gbcLabelNome.gridy = 1;
         gbcLabelNome.insets = new Insets(10, 10, 10, 10);
         gbcLabelNome.anchor = GridBagConstraints.WEST;
-        contentPanel.add(new JLabel("Seu Nome:"), gbcLabelNome);
+        contentPanel.add(new JLabel("Nome:"), gbcLabelNome);
         
         GridBagConstraints gbcTxtNome = new GridBagConstraints();
         gbcTxtNome.gridx = 1;

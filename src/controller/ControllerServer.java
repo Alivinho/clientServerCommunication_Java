@@ -3,6 +3,9 @@ package controller;
 import visual.*;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+
 import java.io.*;
 import java.net.*;
 
@@ -94,9 +97,58 @@ public class ControllerServer {
     private void enviarMensagem() {
         String text = panel.getInputField().getText().trim();
         if (!text.isEmpty()) {
-            fileTransfer.sendText(nomeUsuario + ": " + text);
-            panel.getTextAreaChatServer().append(nomeUsuario + ": " + text + "\n");
+            // Formata a mensagem para enviar
+            String formattedMsg = formatarMensagemDireita(nomeUsuario + ": " + text);
+            fileTransfer.sendText(formattedMsg);
+            
+            // Adiciona ao chat local
+            appendToChat(formattedMsg);
             panel.getInputField().setText("");
         }
+    }
+    
+    private void appendToChat(String html) {
+        JTextPane textPane = (JTextPane) panel.getTextAreaChatServer(); // ou getTextAreaChatServer() no servidor
+        try {
+            textPane.setEditable(true);
+            HTMLEditorKit editorKit = (HTMLEditorKit) textPane.getEditorKit();
+            HTMLDocument doc = (HTMLDocument) textPane.getDocument();
+            
+            // Insere quebra de linha antes da nova mensagem
+            editorKit.insertHTML(doc, doc.getLength(), "<br>", 0, 0, null);
+            
+            // Insere a mensagem formatada
+            editorKit.insertHTML(doc, doc.getLength(), html, 0, 0, null);
+            
+            // Move o scroll para o final
+            textPane.setCaretPosition(doc.getLength());
+            textPane.setEditable(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String formatarMensagemDireita(String mensagem) {
+        return String.format(
+            "<html>" +
+            "<div style='text-align:right; margin:5px 10px 5px 50px;'>" +
+            "<div style='background:#DCF8C6; display:inline-block; padding:8px 12px; " +
+            "border-radius:15px 15px 0 15px; max-width:70%%; word-wrap:break-word; " +
+            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000;'>" +
+            "%s</div></div></html>", 
+            mensagem
+        );
+    }
+
+    private String formatarMensagemEsquerda(String mensagem) {
+        return String.format(
+            "<html>" +
+            "<div style='text-align:left; margin:5px 50px 5px 10px;'>" +
+            "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; " +
+            "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; " +
+            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>" +
+            "%s</div></div></html>", 
+            mensagem
+        );
     }
 }

@@ -4,19 +4,21 @@ import java.io.*;
 import java.net.Socket;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import visual.FileProgressDialog;
 
 public class FileTransfer {
     private Socket socket;
     private String downloadFolder;
-    private JTextArea chatArea;
+    private JTextPane chatArea;
     private JFrame parentFrame;
 
-    public FileTransfer(Socket socket, String downloadFolder, JTextArea chatArea, JFrame parentFrame) {
+    public FileTransfer(Socket socket, String downloadFolder, JTextPane jTextPane, JFrame parentFrame) {
         this.socket = socket;
         this.downloadFolder = downloadFolder;
-        this.chatArea = chatArea;
+        this.chatArea = jTextPane;
         this.parentFrame = parentFrame;
 
         new File(downloadFolder).mkdirs();
@@ -80,15 +82,18 @@ public class FileTransfer {
                     String command = dis.readUTF();
                     if ("TEXT".equals(command)) {
                         String message = dis.readUTF();
-                        appendToChat(message);
+                        // Formata como mensagem recebida (esquerda)
+                        String formattedMsg = "<div style='text-align:left; margin:5px;'>" +
+                            "<div style='background:#FFFFFF; display:inline-block; padding:8px; " +
+                            "border-radius:8px; border:1px solid #EEE; max-width:70%; word-wrap:break-word;'>" +
+                            message + "</div></div>";
+                        appendToChat(formattedMsg);
                     } else if ("FILE".equals(command)) {
                         receiveFile(dis);
-                    } else {
-                        appendToChat("[Erro] Comando desconhecido: " + command);
                     }
                 }
             } catch (IOException ex) {
-                appendToChat("[Erro] Falha ao receber: " + ex.getMessage());
+                appendToChat("[Erro] Conexão perdida: " + ex.getMessage());
             }
         }).start();
     }
@@ -115,6 +120,42 @@ public class FileTransfer {
     }
 
     private void appendToChat(String message) {
-        SwingUtilities.invokeLater(() -> chatArea.append(message + "\n"));
+        // Verifica se é mensagem do sistema (não formatar)
+        if (message.startsWith("[") && message.endsWith("]")) {
+            String systemMsg = String.format(
+                "<html><div style='text-align:center; color:#666; margin:5px; font-style:italic;'>%s</div></html>",
+                message
+            );
+            appendFormattedMessage(systemMsg);
+            return;
+        }
+
+        // Formata como mensagem recebida (esquerda) por padrão
+        String formattedMsg = String.format(
+            "<html><div style='text-align:left; margin:5px 50px 5px 10px;'>" +
+            "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; " +
+            "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; " +
+            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>" +
+            "%s</div></div></html>",
+            message
+        );
+        
+        appendFormattedMessage(formattedMsg);
+    }
+
+    private void appendFormattedMessage(String html) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                chatArea.setEditable(true);
+                HTMLEditorKit editorKit = (HTMLEditorKit) chatArea.getEditorKit();
+                HTMLDocument doc = (HTMLDocument) chatArea.getDocument();
+                
+                editorKit.insertHTML(doc, doc.getLength(), html, 0, 0, null);
+                chatArea.setCaretPosition(doc.getLength());
+                chatArea.setEditable(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
