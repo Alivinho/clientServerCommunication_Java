@@ -10,13 +10,11 @@ public class ControllerClient {
     private JFrame frame;
     private PanelClient panel;
 
-    private PrintWriter out;
-    private BufferedReader in;
-
     private Socket socket;
-
     private String nomeUsuario;
     private String nomeServidor;
+
+    private FileTransfer fileTransfer;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ControllerClient().iniciar());
@@ -38,8 +36,7 @@ public class ControllerClient {
             int porta = panelMain.getPorta();
 
             if (nomeUsuario.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Por favor, informe seu nome", "Aviso",
-                        JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Por favor, informe seu nome", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -65,76 +62,44 @@ public class ControllerClient {
 
         panel.getBtnEnviar().addActionListener(e -> enviarMensagem());
         panel.getInputField().addActionListener(e -> enviarMensagem());
+        panel.getBtnUpload().addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                fileTransfer.sendFile(fileChooser.getSelectedFile());
+            }
+        });
 
         new Thread(() -> {
             try {
                 socket = new Socket(ip, porta);
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // Enviar nome do usuário primeiro
-                out.println("NOME_CLIENTE:" + nomeUsuario);
+                fileTransfer = new FileTransfer(
+                        socket,
+                        System.getProperty("user.home") + File.separator + "Downloads",
+                        panel.getTextAreaChatClient(),
+                        frame
+                );
 
-                // Mensagem de conexão bem-sucedida → console
+                //fileTransfer.sendText("NOME_CLIENTE:" + nomeUsuario);
+
                 System.out.println("Conectado ao servidor " + ip + ":" + porta);
 
-                // Receber nome do servidor
-                String primeiraMensagem = in.readLine();
-                if (primeiraMensagem != null && primeiraMensagem.startsWith("NOME_SERVIDOR:")) {
-                    nomeServidor = primeiraMensagem.substring(14);
-                    // Mensagem de conexão realizada → console
-                    System.out.println("Você está conectado ao servidor de " + nomeServidor);
-                }
-
-                new Thread(this::receberMensagens).start();
+                fileTransfer.receive();
 
             } catch (IOException e) {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
-                        "Erro ao conectar: " + e.getMessage(), "Erro",
-                        JOptionPane.ERROR_MESSAGE));
+                        "Erro ao conectar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE));
                 frame.dispose();
             }
         }).start();
     }
 
-    private void receberMensagens() {
-        try {
-            String message;
-            while ((message = in.readLine()) != null) {
-                final String msgFinal = message;
-                SwingUtilities.invokeLater(() -> {
-                    panel.getTextAreaChatClient().append(nomeServidor + ": " + msgFinal + "\n");
-                });
-            }
-        } catch (IOException e) {
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
-                    "Conexão perdida com o servidor: " + e.getMessage(),
-                    "Conexão encerrada",
-                    JOptionPane.WARNING_MESSAGE));
-        } finally {
-            fecharConexoes();
-        }
-    }
-
     private void enviarMensagem() {
         String text = panel.getInputField().getText().trim();
-        if (!text.isEmpty() && out != null) {
-            out.println(text);
+        if (!text.isEmpty()) {
+            fileTransfer.sendText(nomeUsuario + ": " + text);
             panel.getTextAreaChatClient().append(nomeUsuario + ": " + text + "\n");
             panel.getInputField().setText("");
-        }
-    }
-
-    private void fecharConexoes() {
-        try {
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-            System.out.println("Conexão fechada.");
-        } catch (IOException e) {
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
-                    "Erro ao fechar conexões: " + e.getMessage(), "Erro",
-                    JOptionPane.ERROR_MESSAGE));
         }
     }
 }
