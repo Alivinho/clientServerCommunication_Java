@@ -23,17 +23,7 @@ public class PanelClient extends JPanel {
 		add(getBottomPanel(), BorderLayout.SOUTH);             // Campo de entrada + botão
 	}
 	
-	// Área de texto onde o chat aparece
-	/*public JTextArea getTextAreaChatClient() {
-        if (chatClient == null) {
-        	chatClient = new JTextArea();
-        	chatClient.setEditable(false);
-        	chatClient.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        	chatClient.setLineWrap(true);
-        	chatClient.setWrapStyleWord(true);
-        }
-        return chatClient;
-    }*/
+
 	
 	public JTextPane getTextAreaChatClient() {
 	    if (chatClient == null) {
@@ -41,7 +31,7 @@ public class PanelClient extends JPanel {
 	        chatClient.setEditable(false);
 	        chatClient.setContentType("text/html");
 	        chatClient.setEditorKit(new HTMLEditorKit());
-	        chatClient.setBackground(new Color(240, 242, 245)); // Cor de fundo similar ao WhatsApp
+	        chatClient.setBackground(new Color(240, 242, 245)); 
 	        chatClient.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	        
 	        // Configura margens internas
@@ -84,11 +74,8 @@ public class PanelClient extends JPanel {
 	        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	        //bottomPanel.setBackground(Color.WHITE);
 	        
-	        // Painel para os componentes da esquerda (upload + input)
 	        JPanel leftPanel = new JPanel(new BorderLayout(5, 0));
-	        
-	        // Adiciona o botão de upload
-	        leftPanel.add(getBtnUpload(), BorderLayout.WEST);
+	        	        leftPanel.add(getBtnUpload(), BorderLayout.WEST);
 	        leftPanel.add(getInputField(), BorderLayout.CENTER);
 	        
 	        bottomPanel.add(leftPanel, BorderLayout.CENTER);
@@ -99,9 +86,7 @@ public class PanelClient extends JPanel {
 
 	    public JButton getBtnUpload() {
 	        if (btnUpload == null) {
-	            // Carrega o ícone
-	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));
-	            
+	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));	            
 	            // Redimensiona o ícone se necessário
 	            Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 	            uploadIcon = new ImageIcon(img);

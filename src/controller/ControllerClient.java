@@ -15,7 +15,6 @@ public class ControllerClient {
 
     private Socket socket;
     private String nomeUsuario;
-    private String nomeServidor;
 
     private FileTransfer fileTransfer;
 
@@ -79,12 +78,11 @@ public class ControllerClient {
                 fileTransfer = new FileTransfer(
                 	    socket,
                 	    System.getProperty("user.home") + File.separator + "Downloads",
-                	    panel.getTextAreaChatClient(), // ou getTextAreaChatServer() no servidor
+                	    panel.getTextAreaChatClient(), 
                 	    frame,
-                	    nomeUsuario // Adicione este parâmetro
+                	    nomeUsuario 
                 	);
 
-                //fileTransfer.sendText("NOME_CLIENTE:" + nomeUsuario);
 
                 System.out.println("Conectado ao servidor " + ip + ":" + porta);
 
@@ -110,10 +108,9 @@ public class ControllerClient {
             panel.getInputField().setText("");
         }
     }
-    
 
     private void appendToChat(String html) {
-        JTextPane textPane = (JTextPane) panel.getTextAreaChatClient(); // ou getTextAreaChatServer() no servidor
+        JTextPane textPane = (JTextPane) panel.getTextAreaChatClient(); 
         try {
             textPane.setEditable(true);
             HTMLEditorKit editorKit = (HTMLEditorKit) textPane.getEditorKit();
@@ -145,15 +142,5 @@ public class ControllerClient {
         );
     }
 
-    private String formatarMensagemEsquerda(String mensagem) {
-        return String.format(
-            "<html>" +
-            "<div style='text-align:left; margin:5px 50px 5px 10px;'>" +
-            "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; " +
-            "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; " +
-            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>" +
-            "%s</div></div></html>", 
-            mensagem
-        );
-    }
+    
 }

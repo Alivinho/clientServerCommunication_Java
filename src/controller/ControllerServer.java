@@ -15,7 +15,6 @@ public class ControllerServer {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-
     private String nomeUsuario;
 
     private FileTransfer fileTransfer;
@@ -65,6 +64,12 @@ public class ControllerServer {
 
         panel.getBtnEnviar().addActionListener(e -> enviarMensagem());
         panel.getInputField().addActionListener(e -> enviarMensagem());
+        panel.getBtnUpload().addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                fileTransfer.sendFile(fileChooser.getSelectedFile());
+            }
+        });
 
         new Thread(() -> {
             try {
@@ -78,13 +83,11 @@ public class ControllerServer {
                 fileTransfer = new FileTransfer(
                 		clientSocket,
                 	    System.getProperty("user.home") + File.separator + "Downloads",
-                	    panel.getTextAreaChatServer(), // ou getTextAreaChatServer() no servidor
+                	    panel.getTextAreaChatServer(), 
                 	    frame,
-                	    nomeUsuario // Adicione este parâmetro
+                	    nomeUsuario 
                 	);
                 System.out.println("Cliente conectado!");
-
-                //fileTransfer.sendText("NOME_SERVIDOR:" + nomeUsuario);
 
                 fileTransfer.receive();
 
@@ -109,7 +112,7 @@ public class ControllerServer {
     }
     
     private void appendToChat(String html) {
-        JTextPane textPane = (JTextPane) panel.getTextAreaChatServer(); // ou getTextAreaChatServer() no servidor
+        JTextPane textPane = (JTextPane) panel.getTextAreaChatServer(); 
         try {
             textPane.setEditable(true);
             HTMLEditorKit editorKit = (HTMLEditorKit) textPane.getEditorKit();
@@ -121,7 +124,6 @@ public class ControllerServer {
             // Insere a mensagem formatada
             editorKit.insertHTML(doc, doc.getLength(), html, 0, 0, null);
             
-            // Move o scroll para o final
             textPane.setCaretPosition(doc.getLength());
             textPane.setEditable(false);
         } catch (Exception e) {
@@ -141,15 +143,5 @@ public class ControllerServer {
         );
     }
 
-    private String formatarMensagemEsquerda(String mensagem) {
-        return String.format(
-            "<html>" +
-            "<div style='text-align:left; margin:5px 50px 5px 10px;'>" +
-            "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; " +
-            "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; " +
-            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>" +
-            "%s</div></div></html>", 
-            mensagem
-        );
-    }
+   
 }

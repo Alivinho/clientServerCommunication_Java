@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,21 +23,20 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class PanelServer extends JPanel {
 
-	//private JTextArea chatServer;
 	private JTextPane  chatServer; 
+	private JScrollPane scrollPane;
+
 
 	private JTextField inputField;
+
 	private JButton btnEnviar;
-	private JScrollPane scrollPane;
+	private JButton btnUpload; 
+
 	// Image backgroundImage;
 
 	public PanelServer() {
 		setLayout(new BorderLayout());
-		//setOpaque(false);
 		
-		//getTextAreaChatServer().setOpaque(false);
-		//getScrollPaneChatServer().setOpaque(false);
-		//getScrollPaneChatServer().getViewport().setOpaque(false);
 
 		setBackground(Color.WHITE);
 
@@ -60,30 +60,6 @@ public class PanelServer extends JPanel {
 	        }
 	    }*/
 
-	// Área onde as mensagens são exibidas
-	/*public JTextArea getTextAreaChatServer() {
-		if (chatServer == null) {
-			chatServer = new JTextArea();
-			chatServer.setEditable(false);
-			chatServer.setFont(new Font("SansSerif", Font.PLAIN, 14));
-			chatServer.setLineWrap(true);
-			chatServer.setWrapStyleWord(true);
-		}
-		return chatServer;
-	}*/
-	
-	
-
-	/*public JTextPane getTextAreaChatServer() {
-        if (chatServer == null) {
-        	chatServer = new JTextPane();
-            chatServer.setEditable(false);
-            chatServer.setContentType("text/html"); // Habilita HTML
-            chatServer.setEditorKit(new HTMLEditorKit());
-            chatServer.setBackground(Color.WHITE);
-        }
-        return chatServer;
-    }*/
 	
 	public JTextPane getTextAreaChatServer() {
 	    if (chatServer == null) {
@@ -91,7 +67,7 @@ public class PanelServer extends JPanel {
 	    	chatServer.setEditable(false);
 	        chatServer.setContentType("text/html");
 	        chatServer.setEditorKit(new HTMLEditorKit());
-	        chatServer.setBackground(new Color(240, 242, 245)); // Cor de fundo similar ao WhatsApp
+	        chatServer.setBackground(new Color(240, 242, 245)); 
 	        chatServer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	        
 	        // Configura margens internas
@@ -129,14 +105,34 @@ public class PanelServer extends JPanel {
 		return btnEnviar;
 	}
 
-	// Painel inferior com campo e botão
-	private JPanel getBottomPanel() {
-		JPanel bottomPanel = new JPanel(new BorderLayout(10, 0));
-		bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		bottomPanel.setBackground(Color.WHITE);
-		bottomPanel.add(getInputField(), BorderLayout.CENTER);
-		bottomPanel.add(getBtnEnviar(), BorderLayout.EAST);
-		return bottomPanel;
-	}
+	  private JPanel getBottomPanel() {
+	        JPanel bottomPanel = new JPanel(new BorderLayout(5, 0));
+	        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+	        //bottomPanel.setBackground(Color.WHITE);
+	        
+	        JPanel leftPanel = new JPanel(new BorderLayout(5, 0));
+	        	        leftPanel.add(getBtnUpload(), BorderLayout.WEST);
+	        leftPanel.add(getInputField(), BorderLayout.CENTER);
+	        
+	        bottomPanel.add(leftPanel, BorderLayout.CENTER);
+	        bottomPanel.add(getBtnEnviar(), BorderLayout.EAST);
+	        
+	        return bottomPanel;
+	    }
+	
+	 public JButton getBtnUpload() {
+	        if (btnUpload == null) {
+	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));	            
+	            // Redimensiona o ícone se necessário
+	            Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+	            uploadIcon = new ImageIcon(img);
+	            
+	            btnUpload = new JButton(uploadIcon);
+	            btnUpload.setToolTipText("Enviar arquivo");
+	            //btnUpload.setBackground(new Color(230, 230, 230));
+	            btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+	        }
+	        return btnUpload;
+	    }
 
 }

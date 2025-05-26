@@ -80,6 +80,7 @@ public class FileTransfer {
 	public void receive() {
 		new Thread(() -> {
 			try {
+				
 				DataInputStream dis = new DataInputStream(socket.getInputStream());
 				while (true) {
 					String command = dis.readUTF();
@@ -99,6 +100,8 @@ public class FileTransfer {
 						receiveFile(dis);
 					}
 				}
+				
+				
 			} catch (IOException ex) {
 				appendToChat("[Erro] Conexão perdida: " + ex.getMessage());
 			}
@@ -127,47 +130,39 @@ public class FileTransfer {
 	}
 
 	private void appendToChat(String message) {
-	    // Se já estiver formatado como HTML, apenas exibe
-	    if (message.startsWith("<html>")) {
-	        appendFormattedMessage(message);
-	        return;
-	    }
-	    
-	    // Verifica se é mensagem do sistema
-	    if (message.startsWith("[") && message.endsWith("]")) {
-	        String systemMsg = String.format(
-	            "<html><div style='text-align:center; color:#666; margin:5px; font-style:italic;'>%s</div></html>",
-	            message
-	        );
-	        appendFormattedMessage(systemMsg);
-	        return;
-	    }
-	    
-	    // Verifica se é mensagem própria
-	    boolean isOwnMessage = message.startsWith(nomeUsuario + ":");
-	    String formattedMsg;
-	    
-	    if (isOwnMessage) {
-	        formattedMsg = String.format(
-	            "<html><div style='text-align:right; margin:5px 10px 5px 50px;'>" +
-	            "<div style='background:#DCF8C6; display:inline-block; padding:8px 12px; " +
-	            "border-radius:15px 15px 0 15px; max-width:70%%; word-wrap:break-word; " +
-	            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000;'>" +
-	            "%s</div></div></html>",
-	            message
-	        );
-	    } else {
-	        formattedMsg = String.format(
-	            "<html><div style='text-align:left; margin:5px 50px 5px 10px;'>" +
-	            "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; " +
-	            "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; " +
-	            "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>" +
-	            "%s</div></div></html>",
-	            message
-	        );
-	    }
-	    
-	    appendFormattedMessage(formattedMsg);
+		// Se já estiver formatado como HTML, apenas exibe
+		if (message.startsWith("<html>")) {
+			appendFormattedMessage(message);
+			return;
+		}
+		// Verifica se é mensagem do sistema
+		if (message.startsWith("[") && message.endsWith("]")) {
+			String systemMsg = String.format(
+					"<html><div style='text-align:center; color:#666; margin:5px; font-style:italic;'>%s</div></html>",
+					message);
+			appendFormattedMessage(systemMsg);
+			return;
+		}
+
+		// Verifica se é mensagem própria
+		boolean isOwnMessage = message.startsWith(nomeUsuario + ":");
+		String formattedMsg;
+
+		if (isOwnMessage) {
+			formattedMsg = String.format("<html><div style='text-align:right; margin:5px 10px 5px 50px;'>"
+					+ "<div style='background:#DCF8C6; display:inline-block; padding:8px 12px; "
+					+ "border-radius:15px 15px 0 15px; max-width:70%%; word-wrap:break-word; "
+					+ "font-family:Segoe UI, sans-serif; font-size:14px; color:#000;'>" + "%s</div></div></html>",
+					message);
+		} else {
+			formattedMsg = String.format("<html><div style='text-align:left; margin:5px 50px 5px 10px;'>"
+					+ "<div style='background:#FFFFFF; display:inline-block; padding:8px 12px; "
+					+ "border-radius:15px 15px 15px 0; max-width:70%%; word-wrap:break-word; "
+					+ "font-family:Segoe UI, sans-serif; font-size:14px; color:#000; border:1px solid #EEE;'>"
+					+ "%s</div></div></html>", message);
+		}
+
+		appendFormattedMessage(formattedMsg);
 	}
 
 	private void appendFormattedMessage(String html) {
