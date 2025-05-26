@@ -1,6 +1,9 @@
 package visual;
 
 import java.awt.*;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -13,14 +16,40 @@ public class PanelClient extends JPanel {
 	private JButton bntEnviar;
 	private JButton btnUpload; 
 	
+	Image backgroundImage;
+
+	
 	private JScrollPane scrollPane;
 
 	public PanelClient() {
 		setLayout(new BorderLayout());
 		setBackground(Color.WHITE);
+		setOpaque(false);
+		
+		
+		getTextAreaChatClient().setOpaque(false);
+		getScrollPaneChatClient().setOpaque(false);
+		getScrollPaneChatClient().getViewport().setOpaque(false);
 
 		add(getScrollPaneChatClient(), BorderLayout.CENTER);  // Área de mensagens com rolagem
 		add(getBottomPanel(), BorderLayout.SOUTH);             // Campo de entrada + botão
+		
+		try {
+			backgroundImage = ImageIO.read(getClass().getResource("/img/fundo_Chat1.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+			backgroundImage = null;
+		}
+	}
+	
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (backgroundImage != null) {
+			// Redimensiona a imagem para preencher todo o painel
+			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		}
 	}
 	
 
