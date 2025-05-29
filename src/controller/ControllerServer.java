@@ -62,14 +62,12 @@ public class ControllerServer {
         frame.getContentPane().add(panel);
         frame.setVisible(true);
 
+        // Desabilita o botão de upload até que o cliente se conecte
+        panel.getBtnUpload().setEnabled(false);
+
+        // Configura os listeners (mas o upload só funcionará após a conexão)
         panel.getBtnEnviar().addActionListener(e -> enviarMensagem());
         panel.getInputField().addActionListener(e -> enviarMensagem());
-        panel.getBtnUpload().addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                fileTransfer.sendFile(fileChooser.getSelectedFile());
-            }
-        });
 
         new Thread(() -> {
             try {
@@ -79,23 +77,37 @@ public class ControllerServer {
 
                 clientSocket = serverSocket.accept();
 
-
                 fileTransfer = new FileTransfer(
-                		clientSocket,
-                	    System.getProperty("user.home") + File.separator + "Downloads",
-                	    panel.getTextAreaChatServer(), 
-                	    frame,
-                	    nomeUsuario 
-                	);
+                    clientSocket,
+                    System.getProperty("user.home") + File.separator + "Downloads",
+                    panel.getTextAreaChatServer(),
+                    frame,
+                    nomeUsuario
+                );
                 System.out.println("Cliente conectado!");
+
+                // Habilita o botão de upload APÓS a conexão ser estabelecida
+                SwingUtilities.invokeLater(() -> panel.getBtnUpload().setEnabled(true));
 
                 fileTransfer.receive();
 
             } catch (IOException ex) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
-                        "Erro no servidor: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE));
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                    frame,
+                    "Erro no servidor: " + ex.getMessage(),
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE
+                ));
             }
         }).start();
+
+        // Configura o listener do botão de upload (só será chamado após a conexão estar pronta)
+        panel.getBtnUpload().addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                fileTransfer.sendFile(fileChooser.getSelectedFile());
+            }
+        });
     }
 
     private void enviarMensagem() {

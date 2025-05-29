@@ -10,72 +10,84 @@ import javax.swing.text.html.HTMLEditorKit;
 import visual.FileProgressDialog;
 
 public class FileTransfer {
-	private Socket socket;
-	private String downloadFolder;
-	private JTextPane chatArea;
-	private JFrame parentFrame;
-	private String nomeUsuario;
+    private Socket socket;
+    private String downloadFolder;
+    private JTextPane chatArea;
+    private JFrame parentFrame;
+    private String nomeUsuario;
 
-	public FileTransfer(Socket socket, String downloadFolder, JTextPane jTextPane, JFrame parentFrame,
-			String nomeUsuario) {
-		this.socket = socket;
-		this.downloadFolder = downloadFolder;
-		this.chatArea = jTextPane;
-		this.parentFrame = parentFrame;
-		this.nomeUsuario = nomeUsuario;
+    // Streams dedicados para texto e arquivos
+    private DataOutputStream textOutputStream;
+    private DataOutputStream fileOutputStream;
 
-		new File(downloadFolder).mkdirs();
-	}
+    public FileTransfer(Socket socket, String downloadFolder, JTextPane chatArea, JFrame parentFrame, String nomeUsuario) {
+        this.socket = socket;
+        this.downloadFolder = downloadFolder;
+        this.chatArea = chatArea;
+        this.parentFrame = parentFrame;
+        this.nomeUsuario = nomeUsuario;
 
-	public void sendText(String message) {
-		new Thread(() -> {
-			try {
-				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-				dos.writeUTF("TEXT");
-				dos.writeUTF(message);
-				dos.flush();
-			} catch (IOException ex) {
-				appendToChat("[Erro] Falha ao enviar mensagem: " + ex.getMessage());
-			}
-		}).start();
-	}
+        new File(downloadFolder).mkdirs();
 
-	public void sendFile(File file) {
-		FileProgressDialog progressDialog = new FileProgressDialog(parentFrame, "Enviando: " + file.getName());
-		progressDialog.setVisible(true);
+        try {
+            // Cria streams separados para evitar conflitos
+            this.textOutputStream = new DataOutputStream(socket.getOutputStream());
+            this.fileOutputStream = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            appendToChat("[Erro] Falha ao criar streams: " + e.getMessage());
+        }
+    }
 
-		new Thread(() -> {
-			try {
-				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-				FileInputStream fis = new FileInputStream(file);
+    public void sendText(String message) {
+        new Thread(() -> {
+            synchronized (textOutputStream) {
+                try {
+                    textOutputStream.writeUTF("TEXT");
+                    textOutputStream.writeUTF(message);
+                    textOutputStream.flush();
+                } catch (IOException ex) {
+                    appendToChat("[Erro] Falha ao enviar mensagem: " + ex.getMessage());
+                }
+            }
+        }).start();
+    }
 
-				dos.writeUTF("FILE");
-				dos.writeUTF(file.getName());
-				dos.writeLong(file.length());
-				dos.flush();
+    public void sendFile(File file) {
+        FileProgressDialog progressDialog = new FileProgressDialog(parentFrame, "Enviando: " + file.getName());
+        progressDialog.setVisible(true);
 
-				byte[] buffer = new byte[8192];
-				int bytesRead;
-				long totalBytesRead = 0;
-				long fileSize = file.length();
+        new Thread(() -> {
+            synchronized (fileOutputStream) {
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    fileOutputStream.writeUTF("FILE");
+                    fileOutputStream.writeUTF(file.getName());
+                    fileOutputStream.writeLong(file.length());
+                    fileOutputStream.flush();
 
-				while ((bytesRead = fis.read(buffer)) > 0) {
-					dos.write(buffer, 0, bytesRead);
-					totalBytesRead += bytesRead;
-					int progress = (int) ((totalBytesRead * 100) / fileSize);
-					SwingUtilities.invokeLater(() -> progressDialog.updateProgress(progress));
-				}
+                    byte[] buffer = new byte[16000];
+                    int bytesRead;
+                    long totalBytesRead = 0;
+                    long fileSize = file.length();
 
-				fis.close();
-				appendToChat("[Sistema] Arquivo enviado: " + file.getName());
+                    while ((bytesRead = fis.read(buffer)) > 0) {
+                        fileOutputStream.write(buffer, 0, bytesRead);
+                        fileOutputStream.flush(); // Libera os dados imediatamente
+                        totalBytesRead += bytesRead;
 
-			} catch (IOException ex) {
-				appendToChat("[Erro] Falha ao enviar arquivo: " + ex.getMessage());
-			} finally {
-				SwingUtilities.invokeLater(progressDialog::dispose);
-			}
-		}).start();
-	}
+                        int progress = (int) ((totalBytesRead * 100) / fileSize);
+                        SwingUtilities.invokeLater(() -> progressDialog.updateProgress(progress));
+                    }
+
+                    appendToChat("[Sistema] Arquivo enviado: " + file.getName());
+                } catch (IOException ex) {
+                    appendToChat("[Erro] Falha ao enviar arquivo: " + ex.getMessage());
+                } finally {
+                    SwingUtilities.invokeLater(progressDialog::dispose);
+                }
+            }
+        }).start();
+    }
+
 
 	public void receive() {
 		new Thread(() -> {
@@ -115,7 +127,7 @@ public class FileTransfer {
 		File outputFile = new File(downloadFolder, fileName);
 		FileOutputStream fos = new FileOutputStream(outputFile);
 
-		byte[] buffer = new byte[8192];
+		byte[] buffer = new byte[16000];
 		long totalBytesRead = 0;
 		int bytesRead;
 
@@ -123,6 +135,7 @@ public class FileTransfer {
 				&& (bytesRead = dis.read(buffer, 0, (int) Math.min(buffer.length, fileSize - totalBytesRead))) > 0) {
 			fos.write(buffer, 0, bytesRead);
 			totalBytesRead += bytesRead;
+		    System.out.println("Progresso: " + totalBytesRead + "/" + fileSize + " bytes");
 		}
 
 		fos.close();
