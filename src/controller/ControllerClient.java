@@ -129,9 +129,6 @@ public class ControllerClient {
 			HTMLEditorKit editorKit = (HTMLEditorKit) textPane.getEditorKit();
 			HTMLDocument doc = (HTMLDocument) textPane.getDocument();
 
-			// Insere quebra de linha antes da nova mensagem
-			editorKit.insertHTML(doc, doc.getLength(), "<br>", 0, 0, null);
-
 			// Insere a mensagem formatada
 			editorKit.insertHTML(doc, doc.getLength(), html, 0, 0, null);
 
@@ -143,13 +140,13 @@ public class ControllerClient {
 		}
 	}
 
-	private String formatarMensagemDireita(String mensagem) {
-		return String.format(
-				"<html>" + "<div style='text-align:right; margin:5px 10px 5px 50px;'>"
-						+ "<div style='background:#DCF8C6; display:inline-block; padding:8px 12px; "
-						+ "border-radius:15px 15px 0 15px; max-width:70%%; word-wrap:break-word; "
-						+ "font-family:Segoe UI, sans-serif; font-size:14px; color:#000;'>" + "%s</div></div></html>",
-				mensagem);
-	}
-
+	  private String formatarMensagemDireita(String mensagem) {
+	        return String.format(
+	                "<html><div style='text-align:right; margin:5px 10px 5px 50px;'>"
+	                        + "<div style='background:#DCF8C6; display:inline-block; padding:8px 12px; "
+	                        + "border-radius:15px 15px 0 15px; max-width:70%%; word-wrap:break-word; "
+	                        + "font-family:Segoe UI, sans-serif; font-size:14px; color:#000;'>" 
+	                        + "%s</div></div></html>",
+	                mensagem);
+	    }
 }

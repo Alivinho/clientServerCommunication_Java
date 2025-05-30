@@ -272,13 +272,10 @@ public class FileTransfer {
                 chatArea.setEditable(true);
                 HTMLEditorKit editorKit = (HTMLEditorKit) chatArea.getEditorKit();
                 HTMLDocument doc = (HTMLDocument) chatArea.getDocument();
-
-                // Adiciona quebra de linha se necessário
-                if (doc.getLength() > 0) {
-                    editorKit.insertHTML(doc, doc.getLength(), "<br>", 0, 0, null);
-                }
                 
-                editorKit.insertHTML(doc, doc.getLength(), html, 0, 0, null);
+                String wrappedHtml = "<div style='margin: 0; padding: 0;'>" + html + "</div>";
+
+                editorKit.insertHTML(doc, doc.getLength(), wrappedHtml, 0, 0, null);
                 chatArea.setCaretPosition(doc.getLength());
                 chatArea.setEditable(false);
             } catch (Exception e) {

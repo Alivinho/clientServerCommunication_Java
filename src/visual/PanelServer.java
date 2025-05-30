@@ -58,7 +58,6 @@ public class PanelServer extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (backgroundImage != null) {
-			// Redimensiona a imagem para preencher todo o painel
 			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		}
 	}
@@ -72,7 +71,8 @@ public class PanelServer extends JPanel {
 			chatServer.setBackground(new Color(240, 242, 245));
 			chatServer.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-			// Configura margens internas
+			chatServer.setText("<html><body style='margin: 0; padding: 0;'></body></html>");
+			
 			chatServer.setMargin(new Insets(5, 5, 5, 5));
 		}
 		return chatServer;
@@ -109,7 +109,6 @@ public class PanelServer extends JPanel {
 	private JPanel getBottomPanel() {
 		JPanel bottomPanel = new JPanel(new BorderLayout(5, 0));
 		bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		// bottomPanel.setBackground(Color.WHITE);
 
 		JPanel leftPanel = new JPanel(new BorderLayout(5, 0));
 		leftPanel.add(getBtnUpload(), BorderLayout.WEST);
@@ -124,13 +123,11 @@ public class PanelServer extends JPanel {
 	public JButton getBtnUpload() {
 		if (btnUpload == null) {
 			ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));
-			// Redimensiona o ícone se necessário
 			Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 			uploadIcon = new ImageIcon(img);
 
 			btnUpload = new JButton(uploadIcon);
 			btnUpload.setToolTipText("Enviar arquivo");
-			// btnUpload.setBackground(new Color(230, 230, 230));
 			btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		}
 		return btnUpload;

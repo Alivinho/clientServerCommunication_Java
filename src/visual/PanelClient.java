@@ -9,7 +9,6 @@ import javax.swing.text.html.HTMLEditorKit;
 
 public class PanelClient extends JPanel {
 	
-	//private JTextArea chatClient;
 	private JTextPane  chatClient; 
 	private JTextField inputField;
 	
@@ -47,11 +46,9 @@ public class PanelClient extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (backgroundImage != null) {
-			// Redimensiona a imagem para preencher todo o painel
 			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		}
 	}
-	
 
 	
 	public JTextPane getTextAreaChatClient() {
@@ -63,7 +60,8 @@ public class PanelClient extends JPanel {
 	        chatClient.setBackground(new Color(240, 242, 245)); 
 	        chatClient.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	        
-	        // Configura margens internas
+	        chatClient.setText("<html><body style='margin: 0; padding: 0;'></body></html>");
+	        
 	        chatClient.setMargin(new Insets(5, 5, 5, 5));
 	    }
 	    return chatClient;
@@ -101,7 +99,6 @@ public class PanelClient extends JPanel {
 	  private JPanel getBottomPanel() {
 	        JPanel bottomPanel = new JPanel(new BorderLayout(5, 0));
 	        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-	        //bottomPanel.setBackground(Color.WHITE);
 	        
 	        JPanel leftPanel = new JPanel(new BorderLayout(5, 0));
 	        	        leftPanel.add(getBtnUpload(), BorderLayout.WEST);
@@ -116,7 +113,6 @@ public class PanelClient extends JPanel {
 	    public JButton getBtnUpload() {
 	        if (btnUpload == null) {
 	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));	            
-	            // Redimensiona o ícone se necessário
 	            Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 	            uploadIcon = new ImageIcon(img);
 	            
