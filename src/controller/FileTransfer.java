@@ -238,6 +238,8 @@ public class FileTransfer {
         appendToChat("[Sistema] Arquivo recebido: " + fileName + "\nSalvo em: " + outputFile.getAbsolutePath());
     }
 
+    
+    // Método para gerenciar diferentes tipos de mensagens 
     private void appendToChat(String message) {
         if (message.startsWith("<html>")) {
             appendFormattedMessage(message);
@@ -266,6 +268,7 @@ public class FileTransfer {
         appendFormattedMessage(formattedMsg);
     }
 
+ // Método par Inserir as mensagens formatadas na área do Chat
     private void appendFormattedMessage(String html) {
         SwingUtilities.invokeLater(() -> {
             try {

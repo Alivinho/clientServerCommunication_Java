@@ -72,6 +72,7 @@ public class ControllerClient {
 	    new Thread(() -> {
 	        try {
 	            socket = new Socket(ip, porta);
+	           
 	            fileTransfer = new FileTransfer(
 	                socket,
 	                System.getProperty("user.home") + File.separator + "Downloads",
@@ -116,7 +117,6 @@ public class ControllerClient {
 			String rawMessage = nomeUsuario + ": " + text;
 			fileTransfer.sendText(rawMessage);
 
-			// Adiciona ao chat local com formatação de enviado (direita)
 			appendToChat(formatarMensagemDireita(rawMessage));
 			panel.getInputField().setText("");
 		}

@@ -118,7 +118,6 @@ public class PanelClient extends JPanel {
 	            
 	            btnUpload = new JButton(uploadIcon);
 	            btnUpload.setToolTipText("Enviar arquivo");
-	            //btnUpload.setBackground(new Color(230, 230, 230));
 	            btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 	        }
 	        return btnUpload;

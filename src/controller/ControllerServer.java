@@ -72,6 +72,7 @@ public class ControllerServer {
         new Thread(() -> {
             try {
                 serverSocket = new ServerSocket(porta);
+               
                 System.out.println("Servidor iniciado na porta " + porta);
                 System.out.println("Aguardando conexão...");
 
@@ -117,7 +118,6 @@ public class ControllerServer {
             String rawMessage = nomeUsuario + ": " + text;
             fileTransfer.sendText(rawMessage);
             
-            // Adiciona ao chat local com formatação de enviado (direita)
             appendToChat(formatarMensagemDireita(rawMessage));
             panel.getInputField().setText("");
         }
