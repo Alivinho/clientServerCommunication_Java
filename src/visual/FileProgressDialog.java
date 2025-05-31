@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+@SuppressWarnings("serial")
 public class FileProgressDialog extends JDialog {
     private JProgressBar progressBar;
     private JLabel lblStatus;

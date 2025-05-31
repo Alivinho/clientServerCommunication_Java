@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 
+@SuppressWarnings("serial")
 public class PanelClient extends JPanel {
 	
 	private JTextPane  chatClient; 
@@ -115,7 +116,6 @@ public class PanelClient extends JPanel {
 	            ImageIcon uploadIcon = new ImageIcon(getClass().getResource("/icons/icon_Upload_02.png"));	            
 	            Image img = uploadIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
 	            uploadIcon = new ImageIcon(img);
-	            
 	            btnUpload = new JButton(uploadIcon);
 	            btnUpload.setToolTipText("Enviar arquivo");
 	            btnUpload.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

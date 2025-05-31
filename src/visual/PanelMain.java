@@ -2,8 +2,8 @@ package visual;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.border.*;
 
+@SuppressWarnings("serial")
 public class PanelMain extends JPanel {
     private JTextField txtNome;
     private JTextField txtIP;
