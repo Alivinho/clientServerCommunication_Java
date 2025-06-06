@@ -52,10 +52,12 @@ public class FileTransfer {
     public void sendFile(File file) {
         FileProgressDialog progressDialog = new FileProgressDialog(parentFrame, "Enviando: " + file.getName());
         
+        // Se for imagem, exibe no chat local primeiro
         if (ImageDisplayHelper.isImageFile(file)) {
-            String html = ImageDisplayHelper.createImageHTML(file, nomeUsuario);
+            String html = ImageDisplayHelper.createImageHTML(file, nomeUsuario, true);
             appendToChat(html);
         }
+        
         
         progressDialog.setVisible(true);
         
@@ -75,6 +77,8 @@ public class FileTransfer {
                         outputStream.writeUTF("FILE");
                         outputStream.writeUTF(file.getName());
                         outputStream.writeLong(file.length());
+                        
+                        outputStream.writeUTF(nomeUsuario);
                         
                         // BUFFER ADAPTATIVO: Menor para arquivos pequenos, maior para grandes
                         long fileSize = file.length();
@@ -201,9 +205,7 @@ public class FileTransfer {
                     String command = dis.readUTF();
                     if ("TEXT".equals(command)) {
                         String message = dis.readUTF();
-                        // Verifica se a mensagem é do próprio usuário
                         boolean isOwnMessage = message.startsWith(nomeUsuario + ":");
-
                         String formattedMsg;
                         if (isOwnMessage) {
                             formattedMsg = formatarMensagemDireita(message);
@@ -212,7 +214,7 @@ public class FileTransfer {
                         }
                         appendToChat(formattedMsg);
                     } else if ("FILE".equals(command)) {
-                        receiveFile(dis);
+                        receiveFile(dis); 
                     }
                 }
             } catch (IOException ex) {
@@ -224,6 +226,7 @@ public class FileTransfer {
     private void receiveFile(DataInputStream dis) throws IOException {
         String fileName = dis.readUTF();
         long fileSize = dis.readLong();
+        String senderName = dis.readUTF();
 
         File outputFile = new File(downloadFolder, fileName);
         
@@ -240,9 +243,10 @@ public class FileTransfer {
             }
         }
         
-        // Verifica se é imagem e exibe no chat
+     // Verifica se é imagem e exibe no chat
         if (ImageDisplayHelper.isImageFile(outputFile)) {
-            String html = ImageDisplayHelper.createImageHTML(outputFile, nomeUsuario);
+            boolean isOwnMessage = senderName.equals(nomeUsuario);
+            String html = ImageDisplayHelper.createImageHTML(outputFile, senderName, isOwnMessage);
             appendToChat(html);
         } else {
             appendToChat("[Sistema] Arquivo recebido: " + fileName + "\nSalvo em: " + outputFile.getAbsolutePath());
