@@ -52,6 +52,11 @@ public class FileTransfer {
     public void sendFile(File file) {
         FileProgressDialog progressDialog = new FileProgressDialog(parentFrame, "Enviando: " + file.getName());
         
+        if (ImageDisplayHelper.isImageFile(file)) {
+            String html = ImageDisplayHelper.createImageHTML(file, nomeUsuario);
+            appendToChat(html);
+        }
+        
         progressDialog.setVisible(true);
         
         new Thread(() -> {
@@ -234,8 +239,14 @@ public class FileTransfer {
                 System.out.println("Progresso recebimento: " + totalBytesRead + "/" + fileSize + " bytes");
             }
         }
-
-        appendToChat("[Sistema] Arquivo recebido: " + fileName + "\nSalvo em: " + outputFile.getAbsolutePath());
+        
+        // Verifica se é imagem e exibe no chat
+        if (ImageDisplayHelper.isImageFile(outputFile)) {
+            String html = ImageDisplayHelper.createImageHTML(outputFile, nomeUsuario);
+            appendToChat(html);
+        } else {
+            appendToChat("[Sistema] Arquivo recebido: " + fileName + "\nSalvo em: " + outputFile.getAbsolutePath());
+        }
     }
 
     
@@ -254,6 +265,10 @@ public class FileTransfer {
             appendFormattedMessage(systemMsg);
             return;
         }
+        if (message.startsWith("<html>")) {
+            appendFormattedMessage(message);
+            return;
+        }
 
         // Verifica se é mensagem própria
         boolean isOwnMessage = message.startsWith(nomeUsuario + ":");
@@ -266,6 +281,12 @@ public class FileTransfer {
         }
 
         appendFormattedMessage(formattedMsg);
+    }
+    
+    
+    private boolean isImageFile(File file) {
+        String name = file.getName().toLowerCase();
+        return name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg");
     }
 
  // Método par Inserir as mensagens formatadas na área do Chat
