@@ -1,14 +1,13 @@
 package controller;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class ImageDisplayHelper {
-    private static final int MAX_IMAGE_WIDTH = 300;
-    private static final int MAX_IMAGE_HEIGHT = 300;
+    private static final int MAX_IMAGE_WIDTH = 150;
+    private static final int MAX_IMAGE_HEIGHT = 150;
 
     public static boolean isImageFile(File file) {
         String name = file.getName().toLowerCase();
@@ -33,7 +32,7 @@ public class ImageDisplayHelper {
                 width = (int) (height * ratio);
             }
             
-            // Estilo baseado no remetente (própria mensagem ou de outros)
+            // Formatação da Imagem 
             String alignment = isOwnMessage ? "right" : "left";
             String bgColor = isOwnMessage ? "#DCF8C6" : "#FFFFFF";
             String borderRadius = isOwnMessage ? "15px 15px 0 15px" : "15px 15px 15px 0";
